@@ -16,6 +16,13 @@ public class Board implements Iterable<Tile> {
     /** Side that the board currently views as north. */
     private Side viewPerspective;
 
+    /* To create an empty board.
+     * this constructor initializes the values array
+     * to create an empty game board with the given size
+     * and sets the initial view perspective to "north."
+     * This sets up the initial state of the board
+     * when a new Board object is created.
+     */
     public Board(int size) {
         values = new Tile[size][size];
         viewPerspective = Side.NORTH;
@@ -35,6 +42,9 @@ public class Board implements Iterable<Tile> {
         for (int col = 0; col < size; col += 1) {
             for (int row = 0; row < size; row += 1) {
                 int value = rawValues[size - 1 - row][col];
+                /* This variable will hold the tile
+                 * to be placed in the current position
+                 */
                 Tile tile;
                 if (value == 0) {
                     tile = null;

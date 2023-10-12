@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author hou7i
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -83,6 +83,7 @@ public class Model extends Observable {
         score = 0;
         gameOver = false;
         board.clear();
+        /* did not find the block of this function */
         setChanged();
     }
 
@@ -138,6 +139,14 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for (int col = 0; col < b.size(); col ++) {
+            for (int row = 0; row < b.size(); row ++) {
+                if (b.tile(col, row) == null) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -148,6 +157,15 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for (int col = 0; col < b.size(); col ++) {
+            for (int row = 0; row < b.size(); row ++) {
+                if (b.tile(col, row) != null) {
+                    if (b.tile(col, row).value() == MAX_PIECE) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +177,49 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        /* at least one empty space*/
+        for (int col = 0; col < b.size(); col ++) {
+            for (int row = 0; row < b.size(); row ++) {
+                if (b.tile(col, row) == null) {
+                    return true;
+                }
+            }
+        }
+
+        /*there are two adjacent tiles*/
+        for (int col = 0; col < b.size(); col ++) {
+            for (int row = 0; row < b.size(); row ++) {
+
+                /*check upper tile*/
+                if (row < b.size() - 1) {
+                    if (b.tile(col, row).value() == b.tile(col, row + 1).value()) {
+                        return true;
+                    }
+                }
+
+                /*check left tile*/
+                if (col < b.size() - 1) {
+                    if (b.tile(col, row).value() == b.tile(col + 1, row).value()) {
+                        return true;
+                    }
+                }
+
+                /*check lower tile*/
+                if (row > 1) {
+                    if (b.tile(col, row).value() == b.tile(col, row - 1).value()) {
+                        return true;
+                    }
+                }
+
+                /*check right tile*/
+                if (col > 1) {
+                    if (b.tile(col, row).value() == b.tile(col - 1, row).value()) {
+                        return true;
+                    }
+                }
+
+            }
+        }
         return false;
     }
 
