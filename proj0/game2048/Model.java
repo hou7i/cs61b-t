@@ -116,11 +116,33 @@ public class Model extends Observable {
         // changed local variable to true.
 
         // 1. move everything up
-        /* tips:
-        * (1) prolly start to iterate from the top row */
+
         for (int col = 0; col < board.size(); col ++) {
             for (int row = board.size() - 1; row >= 0; row --) {
-                // (a) if there is empty space above, move it one tile up
+                // (a) if there is a same-value tile above
+                for (int CheckSame = board.size(); CheckSame > row; CheckSame --) {
+                    if (board.tile(col, CheckSame).value() == board.tile(col, row).value()) {
+                        // (aa1) if adjacent
+                        if (CheckSame == row + 1) {
+                            // (aaa) if is a result of merge
+                        } else {
+                            // (aa2) if every tile in-between is null
+                            int NullSum = 0;
+                            for (int CheckNull = CheckSame - 1; CheckNull > row; CheckNull --) {
+                                if (board.tile(col, CheckNull) == null) {
+                                    NullSum ++;
+                                }
+                            }
+                            if (NullSum == CheckSame - row - 1) {
+                                // (aaa) if is a result of merge
+                            }
+                        }
+
+
+                    }
+                }
+
+
                 if (board.tile(col, row + 1) == null) {
                     board.move(col, row + 1, board.tile(col, row));
                 // (b) if the above tile has the same value, move it one tile up
