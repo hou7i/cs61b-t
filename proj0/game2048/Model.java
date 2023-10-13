@@ -120,7 +120,7 @@ public class Model extends Observable {
         boolean merged = false;
 
         for (int col = 0; col < board.size(); col ++) {
-            for (int row = board.size() - 2; row >= 0; row --) {
+            for (int row = board.size() - 1; row >= 0; row --) {
 
                 // check if null
                 if (board.tile(col, row) != null) {
@@ -133,6 +133,7 @@ public class Model extends Observable {
                         if (!merged) {
                             // (aaa) move it to the new spot
                             merged = board.move(col, CheckSame(col, row, board), t);
+                            changed = true;
                         }
 
                     }
@@ -153,6 +154,7 @@ public class Model extends Observable {
                         // (bbb) move the tile to the upper tile's coordinates
                         Tile t = board.tile(col, row);
                         board.move(col, row + AboveSum, t);
+                        changed = true;
                     }
 
 
