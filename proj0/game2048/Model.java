@@ -121,13 +121,12 @@ public class Model extends Observable {
 
         for (int col = 0; col < board.size(); col ++) {
             for (int row = board.size() - 1; row >= 0; row --) {
-
+                Tile t = board.tile(col, row);
                 // check if null
-                if (board.tile(col, row) != null) {
+                if (t != null) {
 
                     // (a) check if there is a same-value tile above
                     if (CheckSame(col, row, board) != row) {
-                        Tile t = board.tile(col, row);
 
                         // (aa) if not a result of merge
                         if (!merged) {
@@ -136,28 +135,25 @@ public class Model extends Observable {
                             changed = true;
                         }
 
-                    }
+                    } else {
+                        // (b) check if there is an empty tile above
+                        // (bb) calculate how many empty tiles are there
+                        int AboveSum = 0;
+                        for (int CheckAbove = row + 1; CheckAbove < board.size(); CheckAbove ++) {
+                            if (board.tile(col, CheckAbove) == null) {
+                                AboveSum ++;
+                            } else {
+                                //exit the loop
+                                break;
+                            }
+                        }
 
-                    // (b) check if there is an empty tile above
-                    // (bb) calculate how many empty tiles are there
-                    int AboveSum = 0;
-                    for (int CheckAbove = row + 1; CheckAbove < board.size() - 1; CheckAbove ++) {
-                        if (board.tile(col, CheckAbove) == null) {
-                            AboveSum ++;
-                        } else {
-                            //exit the loop
-                            break;
+                        if (AboveSum > 0) {
+                            // (bbb) move the tile to the upper tile's coordinates
+                            board.move(col, row + AboveSum, t);
+                            changed = true;
                         }
                     }
-
-                    if (AboveSum > 0) {
-                        // (bbb) move the tile to the upper tile's coordinates
-                        Tile t = board.tile(col, row);
-                        board.move(col, row + AboveSum, t);
-                        changed = true;
-                    }
-
-
                 }
             }
         }
