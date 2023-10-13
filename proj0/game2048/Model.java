@@ -122,37 +122,41 @@ public class Model extends Observable {
         for (int col = 0; col < board.size(); col ++) {
             for (int row = board.size() - 2; row >= 0; row --) {
 
-                // (a) check if there is a same-value tile above
-                if (CheckSame(col, row, board.size()) != row) {
-                    Tile t = board.tile(col, row);
+                // check if null
+                if (board.tile(col, row) != null) {
 
-                    // (aa) if not a result of merge
-                    if (!merged) {
-                        // (aaa) move it to the new spot
-                        merged = board.move(col, CheckSame(col, row, board.size()), t);
+                    // (a) check if there is a same-value tile above
+                    if (CheckSame(col, row, board) != row) {
+                        Tile t = board.tile(col, row);
+
+                        // (aa) if not a result of merge
+                        if (!merged) {
+                            // (aaa) move it to the new spot
+                            merged = board.move(col, CheckSame(col, row, board), t);
+                        }
+
                     }
 
-                }
-
-                // (b) check if there is an empty tile above
-                // (bb) calculate how many empty tiles are there
-                int AboveSum = 0;
-                for (int CheckAbove = row + 1; CheckAbove < board.size() - 1; CheckAbove ++) {
-                    if (board.tile(col, CheckAbove) == null) {
-                        AboveSum ++;
-                    } else {
-                        //exit the loop
-                        break;
+                    // (b) check if there is an empty tile above
+                    // (bb) calculate how many empty tiles are there
+                    int AboveSum = 0;
+                    for (int CheckAbove = row + 1; CheckAbove < board.size() - 1; CheckAbove ++) {
+                        if (board.tile(col, CheckAbove) == null) {
+                            AboveSum ++;
+                        } else {
+                            //exit the loop
+                            break;
+                        }
                     }
+
+                    if (AboveSum > 0) {
+                        // (bbb) move the tile to the upper tile's coordinates
+                        Tile t = board.tile(col, row);
+                        board.move(col, row + AboveSum, t);
+                    }
+
+
                 }
-
-                if (AboveSum > 0) {
-                    // (bbb) move the tile to the upper tile's coordinates
-                    Tile t = board.tile(col, row);
-                    board.move(col, row + AboveSum, t);
-                }
-
-
             }
         }
 
@@ -169,29 +173,29 @@ public class Model extends Observable {
     }
 
     //helper method 1
-    public int CheckSame(int col, int row, int size) {
+    public static int CheckSame(int col, int row, Board b) {
         // (a) if there is a same-value tile above
-        for (int CheckSame = size - 2; CheckSame > row; CheckSame --) {
-            if (board.tile(col, CheckSame).value() == board.tile(col, row).value()) {
-                // (aa1) if adjacent
-                if (CheckSame == row + 1) {
-                    // (aaa) if is a result of merge
-                    return CheckSame;
-                } else {
-                    // (aa2) if every tile in-between is null
-                    int NullSum = 0;
-                    for (int CheckNull = CheckSame - 1; CheckNull > row; CheckNull --) {
-                        if (board.tile(col, CheckNull) == null) {
-                            NullSum ++;
-                        }
-                    }
-                    if (NullSum == CheckSame - row - 1) {
+        for (int CheckSame = b.size() - 1; CheckSame > row; CheckSame --) {
+            if (b.tile(col, CheckSame) != null) {
+                if (b.tile(col, CheckSame).value() == b.tile(col, row).value()) {
+                    // (aa1) if adjacent
+                    if (CheckSame == row + 1) {
                         // (aaa) if is a result of merge
                         return CheckSame;
+                    } else {
+                        // (aa2) if every tile in-between is null
+                        int NullSum = 0;
+                        for (int CheckNull = CheckSame - 1; CheckNull > row; CheckNull --) {
+                            if (b.tile(col, CheckNull) == null) {
+                                NullSum ++;
+                            }
+                        }
+                        if (NullSum == CheckSame - row - 1) {
+                            // (aaa) if is a result of merge
+                            return CheckSame;
+                        }
                     }
                 }
-
-
             }
         }
         return row;
