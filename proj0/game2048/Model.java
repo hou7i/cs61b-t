@@ -115,6 +115,28 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        // 1. move everything up
+        /* tips:
+        * (1) prolly start to iterate from the top row */
+        for (int col = 0; col < board.size(); col ++) {
+            for (int row = board.size() - 1; row >= 0; row --) {
+                // (a) if there is empty space above, move it one tile up
+                if (board.tile(col, row + 1) == null) {
+                    board.move(col, row + 1, board.tile(col, row));
+                // (b) if the above tile has the same value, move it one tile up
+                } else if (board.tile(col, row + 1).value() == board.tile(col, row).value()) {
+                    board.move(col, row + 1, board.tile(col, row));
+
+                }
+
+            }
+        }
+
+
+
+        // 2. update the score variable
+        // 3. to set the changed variable to true (if anything changes)
+
         checkGameOver();
         if (changed) {
             setChanged();
