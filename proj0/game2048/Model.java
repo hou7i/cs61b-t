@@ -117,39 +117,24 @@ public class Model extends Observable {
 
         // 1. move everything up
 
+        boolean merged = false;
+
         for (int col = 0; col < board.size(); col ++) {
             for (int row = board.size() - 1; row >= 0; row --) {
-                // (a) if there is a same-value tile above
-                for (int CheckSame = board.size(); CheckSame > row; CheckSame --) {
-                    if (board.tile(col, CheckSame).value() == board.tile(col, row).value()) {
-                        // (aa1) if adjacent
-                        if (CheckSame == row + 1) {
-                            // (aaa) if is a result of merge
-                        } else {
-                            // (aa2) if every tile in-between is null
-                            int NullSum = 0;
-                            for (int CheckNull = CheckSame - 1; CheckNull > row; CheckNull --) {
-                                if (board.tile(col, CheckNull) == null) {
-                                    NullSum ++;
-                                }
-                            }
-                            if (NullSum == CheckSame - row - 1) {
-                                // (aaa) if is a result of merge
-                            }
-                        }
 
+                // (a) check if there is a same-value tile above
+                if (CheckSame(col, row, board.size()) != row) {
+                    Tile t = board.tile(col, row);
 
+                    // (aa) if not a result of merge
+                    if (!merged) {
+                        // (aaa) move it to the new spot
+                        merged = board.move(col, CheckSame(col, row, board.size()), t);
                     }
-                }
-
-
-                if (board.tile(col, row + 1) == null) {
-                    board.move(col, row + 1, board.tile(col, row));
-                // (b) if the above tile has the same value, move it one tile up
-                } else if (board.tile(col, row + 1).value() == board.tile(col, row).value()) {
-                    board.move(col, row + 1, board.tile(col, row));
 
                 }
+
+                // (b) check if there is an empty tile above
 
             }
         }
@@ -164,6 +149,35 @@ public class Model extends Observable {
             setChanged();
         }
         return changed;
+    }
+
+    //helper method 1
+    public int CheckSame(int col, int row, int size) {
+        // (a) if there is a same-value tile above
+        for (int CheckSame = size; CheckSame > row; CheckSame --) {
+            if (board.tile(col, CheckSame).value() == board.tile(col, row).value()) {
+                // (aa1) if adjacent
+                if (CheckSame == row + 1) {
+                    // (aaa) if is a result of merge
+                    return CheckSame;
+                } else {
+                    // (aa2) if every tile in-between is null
+                    int NullSum = 0;
+                    for (int CheckNull = CheckSame - 1; CheckNull > row; CheckNull --) {
+                        if (board.tile(col, CheckNull) == null) {
+                            NullSum ++;
+                        }
+                    }
+                    if (NullSum == CheckSame - row - 1) {
+                        // (aaa) if is a result of merge
+                        return CheckSame;
+                    }
+                }
+
+
+            }
+        }
+        return row;
     }
 
     /** Checks if the game is over and sets the gameOver variable
