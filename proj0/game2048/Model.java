@@ -120,7 +120,7 @@ public class Model extends Observable {
         boolean merged = false;
 
         for (int col = 0; col < board.size(); col ++) {
-            for (int row = board.size() - 1; row >= 0; row --) {
+            for (int row = board.size() - 2; row >= 0; row --) {
 
                 // (a) check if there is a same-value tile above
                 if (CheckSame(col, row, board.size()) != row) {
@@ -135,6 +135,23 @@ public class Model extends Observable {
                 }
 
                 // (b) check if there is an empty tile above
+                // (bb) calculate how many empty tiles are there
+                int AboveSum = 0;
+                for (int CheckAbove = row + 1; CheckAbove < board.size() - 1; CheckAbove ++) {
+                    if (board.tile(col, CheckAbove) == null) {
+                        AboveSum ++;
+                    } else {
+                        //exit the loop
+                        break;
+                    }
+                }
+
+                if (AboveSum > 0) {
+                    // (bbb) move the tile to the upper tile's coordinates
+                    Tile t = board.tile(col, row);
+                    board.move(col, row + AboveSum, t);
+                }
+
 
             }
         }
@@ -154,7 +171,7 @@ public class Model extends Observable {
     //helper method 1
     public int CheckSame(int col, int row, int size) {
         // (a) if there is a same-value tile above
-        for (int CheckSame = size; CheckSame > row; CheckSame --) {
+        for (int CheckSame = size - 2; CheckSame > row; CheckSame --) {
             if (board.tile(col, CheckSame).value() == board.tile(col, row).value()) {
                 // (aa1) if adjacent
                 if (CheckSame == row + 1) {
