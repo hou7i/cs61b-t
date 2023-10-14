@@ -117,7 +117,13 @@ public class Model extends Observable {
 
         // 1. move everything up
 
-        boolean merged = false;
+        // creating a board of original false values
+        int[][] BoardOri = new int[board.size()][board.size()];
+        for (int col = 0; col < board.size(); col ++) {
+            for (int row = 0; row < board.size(); row ++) {
+                BoardOri[col][row] = 0;
+            }
+        }
 
         for (int col = 0; col < board.size(); col ++) {
             for (int row = board.size() - 1; row >= 0; row --) {
@@ -125,16 +131,39 @@ public class Model extends Observable {
                 // check if null
                 if (t != null) {
 
+                    int same = CheckSame(col, row, board);
+
                     // (a) check if there is a same-value tile above
-                    if (CheckSame(col, row, board) != row) {
+                    if (same != row) {
 
-                        // (aa) if not a result of merge
-                        if (!merged) {
+                        // (aa) if not a result of merge(merged == false)
+                        if (BoardOri[col][same] == 0) {
                             // (aaa) move it to the new spot
-                            merged = board.move(col, CheckSame(col, row, board), t);
+                            board.move(col, same, t);
                             changed = true;
-                        }
+                            // update BoardOri value
+                            BoardOri[col][same] = 1;
+                            // update score
+                            score += board.tile (col, same).value();
+                        } else {
+                            // (b) check if there is an empty tile above
+                            // (bb) calculate how many empty tiles are there
+                            int AboveSum = 0;
+                            for (int CheckAbove = row + 1; CheckAbove < board.size(); CheckAbove ++) {
+                                if (board.tile(col, CheckAbove) == null) {
+                                    AboveSum ++;
+                                } else {
+                                    //exit the loop
+                                    break;
+                                }
+                            }
 
+                            if (AboveSum > 0) {
+                                // (bbb) move the tile to the upper tile's coordinates
+                                board.move(col, row + AboveSum, t);
+                                changed = true;
+                            }
+                        }
                     } else {
                         // (b) check if there is an empty tile above
                         // (bb) calculate how many empty tiles are there
