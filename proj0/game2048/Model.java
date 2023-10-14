@@ -115,77 +115,126 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
-        // 1. move everything up
+        // 0. make it tilt at every side
+        if (side == Side.NORTH) {
+            //up only here
+            // 1. move everything up
 
-        // creating a board of original false values
-        int[][] BoardOri = new int[board.size()][board.size()];
-        for (int col = 0; col < board.size(); col ++) {
-            for (int row = 0; row < board.size(); row ++) {
-                BoardOri[col][row] = 0;
+            // creating a board of original false values
+            int[][] BoardOri = new int[board.size()][board.size()];
+            for (int col = 0; col < board.size(); col ++) {
+                for (int row = 0; row < board.size(); row ++) {
+                    BoardOri[col][row] = 0;
+                }
             }
-        }
 
-        for (int col = 0; col < board.size(); col ++) {
-            for (int row = board.size() - 1; row >= 0; row --) {
-                Tile t = board.tile(col, row);
-                // check if null
-                if (t != null) {
+            for (int col = 0; col < board.size(); col ++) {
+                for (int row = board.size() - 1; row >= 0; row --) {
+                    Tile t = board.tile(col, row);
+                    // check if null
+                    if (t != null) {
 
-                    int same = CheckSame(col, row, board);
+                        int same = CheckSame(col, row, board);
 
-                    // (a) check if there is a same-value tile above
-                    if (same != row) {
+                        // (a) check if there is a same-value tile above
+                        if (same != row) {
 
-                        // (aa) if not a result of merge(merged == false)
-                        if (BoardOri[col][same] == 0) {
-                            // (aaa) move it to the new spot
-                            board.move(col, same, t);
-                            changed = true;
-                            // update BoardOri value
-                            BoardOri[col][same] = 1;
-                            // update score
-                            score += board.tile (col, same).value();
+                            // (aa) if not a result of merge(merged == false)
+                            if (BoardOri[col][same] == 0) {
+                                // (aaa) move it to the new spot
+                                board.move(col, same, t);
+                                changed = true;
+                                // update BoardOri value
+                                BoardOri[col][same] = 1;
+                                // update score
+                                score += board.tile (col, same).value();
+                            } else {
+                                // (b) check if there is an empty tile above
+                                // (bb) calculate how many empty tiles are there
+                                int Sum = AboveSum(col, row, board);
+
+                                if (Sum > 0) {
+                                    // (bbb) move the tile to the upper tile's coordinates
+                                    board.move(col, row + Sum, t);
+                                    changed = true;
+                                }
+                            }
                         } else {
                             // (b) check if there is an empty tile above
                             // (bb) calculate how many empty tiles are there
-                            int AboveSum = 0;
-                            for (int CheckAbove = row + 1; CheckAbove < board.size(); CheckAbove ++) {
-                                if (board.tile(col, CheckAbove) == null) {
-                                    AboveSum ++;
-                                } else {
-                                    //exit the loop
-                                    break;
-                                }
-                            }
+                            int Sum = AboveSum(col, row, board);
 
-                            if (AboveSum > 0) {
+                            if (Sum > 0) {
                                 // (bbb) move the tile to the upper tile's coordinates
-                                board.move(col, row + AboveSum, t);
+                                board.move(col, row + Sum, t);
                                 changed = true;
                             }
-                        }
-                    } else {
-                        // (b) check if there is an empty tile above
-                        // (bb) calculate how many empty tiles are there
-                        int AboveSum = 0;
-                        for (int CheckAbove = row + 1; CheckAbove < board.size(); CheckAbove ++) {
-                            if (board.tile(col, CheckAbove) == null) {
-                                AboveSum ++;
-                            } else {
-                                //exit the loop
-                                break;
-                            }
-                        }
-
-                        if (AboveSum > 0) {
-                            // (bbb) move the tile to the upper tile's coordinates
-                            board.move(col, row + AboveSum, t);
-                            changed = true;
                         }
                     }
                 }
             }
+        } else {
+            board.setViewingPerspective(side);
+            // up only here
+            // 1. move everything up
+
+            // creating a board of original false values
+            int[][] BoardOri = new int[board.size()][board.size()];
+            for (int col = 0; col < board.size(); col ++) {
+                for (int row = 0; row < board.size(); row ++) {
+                    BoardOri[col][row] = 0;
+                }
+            }
+
+            for (int col = 0; col < board.size(); col ++) {
+                for (int row = board.size() - 1; row >= 0; row --) {
+                    Tile t = board.tile(col, row);
+                    // check if null
+                    if (t != null) {
+
+                        int same = CheckSame(col, row, board);
+
+                        // (a) check if there is a same-value tile above
+                        if (same != row) {
+
+                            // (aa) if not a result of merge(merged == false)
+                            if (BoardOri[col][same] == 0) {
+                                // (aaa) move it to the new spot
+                                board.move(col, same, t);
+                                changed = true;
+                                // update BoardOri value
+                                BoardOri[col][same] = 1;
+                                // update score
+                                score += board.tile (col, same).value();
+                            } else {
+                                // (b) check if there is an empty tile above
+                                // (bb) calculate how many empty tiles are there
+                                int Sum = AboveSum(col, row, board);
+
+                                if (Sum > 0) {
+                                    // (bbb) move the tile to the upper tile's coordinates
+                                    board.move(col, row + Sum, t);
+                                    changed = true;
+                                }
+                            }
+                        } else {
+                            // (b) check if there is an empty tile above
+                            // (bb) calculate how many empty tiles are there
+                            int Sum = AboveSum(col, row, board);
+
+                            if (Sum > 0) {
+                                // (bbb) move the tile to the upper tile's coordinates
+                                board.move(col, row + Sum, t);
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+            board.setViewingPerspective(Side.NORTH);
         }
+
+
 
 
 
@@ -227,6 +276,23 @@ public class Model extends Observable {
         }
         return row;
     }
+
+    //helper method 2
+    public static int AboveSum (int col, int row, Board b) {
+        // (b) check if there is an empty tile above
+        // (bb) calculate how many empty tiles are there
+        int AboveSum = 0;
+        for (int CheckAbove = row + 1; CheckAbove < b.size(); CheckAbove ++) {
+            if (b.tile(col, CheckAbove) == null) {
+                AboveSum ++;
+            } else {
+                //exit the loop
+                break;
+            }
+        }
+        return AboveSum;
+    }
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
